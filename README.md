@@ -36,6 +36,27 @@ flowchart LR
 - `total_vendas_por_categoria.csv`: published aggregate output.
 - `grafico_vendas_por_categoria.png`: original published chart.
 
+## Reproduce with the included fictional sample
+
+The [seven-row sample](data/sample_sales.csv) is artificial and contains no real transactions. It makes this workflow runnable without obtaining the original database. See [data provenance and expected totals](data/README.md).
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python build_demo_database.py --output outputs/sample_sales.db
+python analysis.py --database outputs/sample_sales.db --output-dir outputs/sample --no-show
+```
+
+Expected sample sales: Technology **450**, Furniture **300**, Office Supplies **50**; total **800** illustrative units. These differ deliberately from the historical published totals above. The builder refuses to overwrite an existing database; choose a new output filename to repeat it.
+
+[Automated checks](https://github.com/natgeo1997/sql-python-sales-analysis/actions) exercise the full sample workflow, verify category totals and the separate region-profit query, and check that analysis leaves the database unchanged.
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
 ## Run with your own database
 
 Requirements: Python 3.10+ and a SQLite database with a `sales` table containing `Category` (text) and `Sales` (numeric). The optional profit-by-region query additionally needs `Region` and `Profit`.
@@ -51,4 +72,4 @@ Omit `--no-show` to also open the chart interactively. Outputs go to the directo
 
 ## Limitations
 
-The original database and its provenance are absent. This repository demonstrates the aggregation workflow and publishes an existing summary, but cannot independently reproduce the original totals. There is no forecasting, profitability analysis in the Python script or claimed business impact. Reproduction requires supplying a compatible database.
+The original database and its provenance are absent. This repository demonstrates the aggregation workflow and publishes an existing summary, but cannot independently reproduce the original totals. There is no forecasting, profitability analysis in the Python script or claimed business impact. The included fictional sample reproduces the workflow; reproducing the historical totals still requires the original compatible database.
